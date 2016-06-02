@@ -6,8 +6,8 @@
 </description>
     <link>http://yourdomain.com/</link>
     <atom:link href="http://yourdomain.com/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 02 Jun 2016 14:24:17 +0800</pubDate>
-    <lastBuildDate>Thu, 02 Jun 2016 14:24:17 +0800</lastBuildDate>
+    <pubDate>Thu, 02 Jun 2016 14:45:32 +0800</pubDate>
+    <lastBuildDate>Thu, 02 Jun 2016 14:45:32 +0800</lastBuildDate>
     <generator>Jekyll v3.1.6</generator>
     
       <item>
@@ -26,6 +26,87 @@
 
 &lt;p&gt;Check out the &lt;a href=&quot;http://jekyllrb.com/docs/home&quot;&gt;Jekyll docs&lt;/a&gt; for more info on how to get the most out of Jekyll. File all bugs/feature requests at &lt;a href=&quot;https://github.com/jekyll/jekyll&quot;&gt;Jekyll’s GitHub repo&lt;/a&gt;. If you have questions, you can ask them on &lt;a href=&quot;https://talk.jekyllrb.com/&quot;&gt;Jekyll Talk&lt;/a&gt;.&lt;/p&gt;
 
+</description>
+        <pubDate>Thu, 02 Jun 2016 14:29:14 +0800</pubDate>
+        <link>http://yourdomain.com/stack%20problems/jekyll/update/2016/06/02/welcome-to-jekyll.html</link>
+        <guid isPermaLink="true">http://yourdomain.com/stack%20problems/jekyll/update/2016/06/02/welcome-to-jekyll.html</guid>
+        
+        
+        <category>Stack Problems</category>
+        
+        <category>jekyll</category>
+        
+        <category>update</category>
+        
+      </item>
+    
+      <item>
+        <title>Welcome to MyBloy !</title>
+        <description>&lt;p&gt;#Hibernate 中的级联操作
+以用户、角色、用户文件为例讲解inverse（关系操作）和（cascade）操作
+inverse 取值 true（不维护关系）或false（维护关系  默认为false） 该属性主要操作的是外键
+cascade 取值null（默认值）、save-update 、all 、delete
+用户、角色是多对多的关系
+用户的映射文件表示：&lt;/p&gt;
+&lt;hibernate-mapping&gt;
+&lt;class name=&quot;com.xing.elec.domain.ElecUser&quot; table=&quot;Elec_User&quot;&gt;
+。。。。。
+&lt;set name=&quot;elecUserFiles&quot; table=&quot;Elec_User_File&quot; inverse=&quot;true&quot; order-by=&quot;progressTime desc&quot; cascade=&quot;delete&quot;&gt;
+&lt;key&gt;
+&lt;column name=&quot;userID&quot;&gt;&lt;/column&gt;
+&lt;/key&gt;
+&lt;one-to-many class=&quot;com.xing.elec.domain.ElecUserFile&quot; /&gt;
+&lt;/set&gt;
+&lt;set name=&quot;elecRoles&quot; table=&quot;elec_user_role&quot; inverse=&quot;true&quot;&gt;
+&lt;key&gt;
+&lt;column name=&quot;userID&quot;&gt;&lt;/column&gt;
+&lt;/key&gt;
+&lt;many-to-many class=&quot;com.xing.elec.domain.ElecRole&quot; column=&quot;roleID&quot;&gt;&lt;/many-to-many&gt;
+&lt;/set&gt;
+&lt;/class&gt;
+&lt;/hibernate-mapping&gt;
+&lt;p&gt;角色的映射文件：&lt;/p&gt;
+&lt;hibernate-mapping&gt;
+&lt;class name=&quot;com.xing.elec.domain.ElecRole&quot; table=&quot;Elec_Role&quot;&gt;
+。。。。
+&lt;set name=&quot;elecUsers&quot; table=&quot;elec_user_role&quot;&gt;
+&lt;key&gt;
+&lt;column name=&quot;roleID&quot;&gt;&lt;/column&gt;
+&lt;/key&gt;
+&lt;many-to-many class=&quot;com.xing.elec.domain.ElecUser&quot; column=&quot;userID&quot; /&gt;
+&lt;/set&gt; 
+&lt;/class&gt;
+&lt;/hibernate-mapping&gt;
+&lt;p&gt;关系操作：
+事例一：
+由于用户和用户文件建立关联的set标签中 的inverse 设置为true 因此用户和用户文件之间建立的关系（外键）由用户文件来维护
+比如说在 新增用户时一个用户有多个用户文件  在向数据库添加插入数据前要执行  elecUserFile.setElecUser(elecUser);该行代码
+改行代码的作用是将用户和用户文件建立关联关系  即（当用户和用户文件的数据插入数据库时 用户文件表中对应的外键有值）
+事例二：
+由于用户和角色（即：用户表）建立关联的set标签中的inverse设置值为true    而角色用户（即：角色表）建立的关联的set标签设置为inverse=”false”(默认为false) 则：
+在删除用户时要删除用户和角色的关联关系（用户角色表中的相关数据） 
+ 如果用用户来删除用户角色表中相关的数据   该操作会报一个异常（存在外键不能删除的异常）
+  正确做法： 是通过用户来获取该用户所有的角色（set集合）然后遍历该set集合得到该用户的每个角色  通过角色在获取用户的set集合  然后在删除该用户
+（使用角色来删除用户角色表中的数据 其实也就是使用角色来操作外键）
+代码实现：
+Set&lt;ElecRole&gt; elecRoles=user.getElecRoles();
+if(elecRoles!=null &amp;amp;&amp;amp; elecRoles.size()&amp;gt;0){
+for(ElecRole elecRole:elecRoles){
+//(通过角色获取封装用户的set集合   来删除用户)
+elecRole.getElecUsers().remove(user);
+}
+}&lt;/ElecRole&gt;&lt;/p&gt;
+
+&lt;p&gt;级联操作
+事例一：
+条件：由于用户和用户文件建立关联的set标签中 cascade设置为delete 
+结果： 当删除用户信息时 与该用户有关的用户文件信息都会被删除（这属于级联删除操作）
+总结：
+inverse： 用来维护关系  一般我们用多的一方来维护一的一方（这样效率高） 而用一的一方来维护多的一方（这样执行的效率不好）
+cascade：主要用于一对一  和一对多   多对多不建议使用
+多对多不建议使用cascade 的原因（以用户角色为例）：如果删除一个用户 就会删除用户表关联的用户角色表以及角色表中相关的数据 而角色表中的数据不应该删除
+&lt;a href=&quot;https://github.com/liuxingroom/liuxingroom.github.io&quot;&gt;Code on GitHub&lt;/a&gt;
+&lt;a href=&quot;http://blog.csdn.net/zcl1199/article/details/51366824&quot;&gt;我的技术博客&lt;/a&gt;&lt;/p&gt;
 </description>
         <pubDate>Thu, 02 Jun 2016 14:24:16 +0800</pubDate>
         <link>http://yourdomain.com/my-awesome-site/jekyll/update/2016/06/02/welcome-to-jekyll.html</link>
