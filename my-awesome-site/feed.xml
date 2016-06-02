@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Your awesome title</title>
+    <description>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.
+</description>
+    <link>http://yourdomain.com/</link>
+    <atom:link href="http://yourdomain.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Thu, 02 Jun 2016 15:14:30 +0800</pubDate>
+    <lastBuildDate>Thu, 02 Jun 2016 15:14:30 +0800</lastBuildDate>
+    <generator>Jekyll v3.1.6</generator>
+    
+      <item>
+        <title></title>
+        <description>&lt;h2 id=&quot;httpblogcsdnnetzcl1199articledetails51385855&quot;&gt;&lt;a href=&quot;http://blog.csdn.net/zcl1199/article/details/51385855&quot;&gt;源路径&lt;/a&gt;&lt;/h2&gt;
+</description>
+        <pubDate>Thu, 02 Jun 2016 15:14:30 +0800</pubDate>
+        <link>http://yourdomain.com/stack%20problems/2016/06/02/2016-06-02-welcome-to-jekyll.html</link>
+        <guid isPermaLink="true">http://yourdomain.com/stack%20problems/2016/06/02/2016-06-02-welcome-to-jekyll.html</guid>
+        
+        
+        <category>Stack Problems</category>
+        
+      </item>
+    
+      <item>
+        <title>Hibernate 级联操作 !</title>
+        <description>&lt;p&gt;#Hibernate 中的级联操作
+以用户、角色、用户文件为例讲解inverse（关系操作）和（cascade）操作
+inverse 取值 true（不维护关系）或false（维护关系  默认为false） 该属性主要操作的是外键
+cascade 取值null（默认值）、save-update 、all 、delete
+用户、角色是多对多的关系
+用户的映射文件表示：&lt;/p&gt;
+&lt;hibernate-mapping&gt;
+&lt;class name=&quot;com.xing.elec.domain.ElecUser&quot; table=&quot;Elec_User&quot;&gt;
+。。。。。
+&lt;set name=&quot;elecUserFiles&quot; table=&quot;Elec_User_File&quot; inverse=&quot;true&quot; order-by=&quot;progressTime desc&quot; cascade=&quot;delete&quot;&gt;
+&lt;key&gt;
+&lt;column name=&quot;userID&quot;&gt;&lt;/column&gt;
+&lt;/key&gt;
+&lt;one-to-many class=&quot;com.xing.elec.domain.ElecUserFile&quot; /&gt;
+&lt;/set&gt;
+&lt;set name=&quot;elecRoles&quot; table=&quot;elec_user_role&quot; inverse=&quot;true&quot;&gt;
+&lt;key&gt;
+&lt;column name=&quot;userID&quot;&gt;&lt;/column&gt;
+&lt;/key&gt;
+&lt;many-to-many class=&quot;com.xing.elec.domain.ElecRole&quot; column=&quot;roleID&quot;&gt;&lt;/many-to-many&gt;
+&lt;/set&gt;
+&lt;/class&gt;
+&lt;/hibernate-mapping&gt;
+&lt;p&gt;角色的映射文件：&lt;/p&gt;
+&lt;hibernate-mapping&gt;
+&lt;class name=&quot;com.xing.elec.domain.ElecRole&quot; table=&quot;Elec_Role&quot;&gt;
+。。。。
+&lt;set name=&quot;elecUsers&quot; table=&quot;elec_user_role&quot;&gt;
+&lt;key&gt;
+&lt;column name=&quot;roleID&quot;&gt;&lt;/column&gt;
+&lt;/key&gt;
+&lt;many-to-many class=&quot;com.xing.elec.domain.ElecUser&quot; column=&quot;userID&quot; /&gt;
+&lt;/set&gt; 
+&lt;/class&gt;
+&lt;/hibernate-mapping&gt;
+&lt;p&gt;关系操作：
+事例一：
+由于用户和用户文件建立关联的set标签中 的inverse 设置为true 因此用户和用户文件之间建立的关系（外键）由用户文件来维护
+比如说在 新增用户时一个用户有多个用户文件  在向数据库添加插入数据前要执行  elecUserFile.setElecUser(elecUser);该行代码
+改行代码的作用是将用户和用户文件建立关联关系  即（当用户和用户文件的数据插入数据库时 用户文件表中对应的外键有值）
+事例二：
+由于用户和角色（即：用户表）建立关联的set标签中的inverse设置值为true    而角色用户（即：角色表）建立的关联的set标签设置为inverse=”false”(默认为false) 则：
+在删除用户时要删除用户和角色的关联关系（用户角色表中的相关数据） 
+ 如果用用户来删除用户角色表中相关的数据   该操作会报一个异常（存在外键不能删除的异常）
+  正确做法： 是通过用户来获取该用户所有的角色（set集合）然后遍历该set集合得到该用户的每个角色  通过角色在获取用户的set集合  然后在删除该用户
+（使用角色来删除用户角色表中的数据 其实也就是使用角色来操作外键）
+代码实现：
+Set&lt;ElecRole&gt; elecRoles=user.getElecRoles();
+if(elecRoles!=null &amp;amp;&amp;amp; elecRoles.size()&amp;gt;0){
+for(ElecRole elecRole:elecRoles){
+//(通过角色获取封装用户的set集合   来删除用户)
+elecRole.getElecUsers().remove(user);
+}
+}&lt;/ElecRole&gt;&lt;/p&gt;
+
+&lt;p&gt;级联操作
+事例一：
+条件：由于用户和用户文件建立关联的set标签中 cascade设置为delete 
+结果： 当删除用户信息时 与该用户有关的用户文件信息都会被删除（这属于级联删除操作）
+总结：
+inverse： 用来维护关系  一般我们用多的一方来维护一的一方（这样效率高） 而用一的一方来维护多的一方（这样执行的效率不好）
+cascade：主要用于一对一  和一对多   多对多不建议使用
+多对多不建议使用cascade 的原因（以用户角色为例）：如果删除一个用户 就会删除用户表关联的用户角色表以及角色表中相关的数据 而角色表中的数据不应该删除
+—
+&lt;a href=&quot;https://github.com/liuxingroom/liuxingroom.github.io&quot;&gt;Code on GitHub&lt;/a&gt;
+&lt;a href=&quot;http://blog.csdn.net/zcl1199/article/details/51366824&quot;&gt;我的技术博客&lt;/a&gt;
+—&lt;/p&gt;
+</description>
+        <pubDate>Thu, 02 Jun 2016 14:24:16 +0800</pubDate>
+        <link>http://yourdomain.com/my-awesome-site/jekyll/update/2016/06/02/welcome-to-jekyll.html</link>
+        <guid isPermaLink="true">http://yourdomain.com/my-awesome-site/jekyll/update/2016/06/02/welcome-to-jekyll.html</guid>
+        
+        
+        <category>my-awesome-site</category>
+        
+        <category>jekyll</category>
+        
+        <category>update</category>
+        
+      </item>
+    
+      <item>
+        <title>在github上搭建jekyll要点</title>
+        <description>&lt;p&gt;使用jekyll将markdown文件生成静态的html文件，并使用主题有序的进行布局，形成最终的博客页面。&lt;/p&gt;
+
+&lt;p&gt;特点&lt;/p&gt;
+
+&lt;p&gt;基于ruby
+使用Markdown书写文章
+无需数据库
+可以使用GitHub Pages发布
+安装Ruby环境&lt;/p&gt;
+
+&lt;p&gt;由于我的是在windows的操作，所以这里用rubyinstaller——http://rubyinstaller.org/downloads/，linux和mac的朋友就直接官网的ruby。&lt;/p&gt;
+
+&lt;p&gt;我使用的版本：rubyinstaller-2.2.3-x64.exe(17.1M)。安装很简单，这里不多描述，但要注意安装的路径。这里我的是D:\Ruby22。安装目录中不要有空格或中文，可能会引发未知的错误。&lt;/p&gt;
+
+&lt;p&gt;安装过程中若没有添加到环境变量，需要设置下环境变量：
+windows下在计算机属性-&amp;gt;系统高级设置-&amp;gt;环境变量，PATH中追加：
+D:\Ruby22\bin\;。注意不是覆盖！&lt;/p&gt;
+
+&lt;p&gt;命令行下输入ruby -v 检测是否安装成功：&lt;/p&gt;
+
+&lt;p&gt;D:\Ruby22&amp;gt;ruby -v
+ruby 2.2.3p173 (2015-08-18 revision 51636) [x64-mingw32]
+出现版本号就说明安装成功了，接下来就要安装jekyll。&lt;/p&gt;
+
+&lt;p&gt;安装jekyll&lt;/p&gt;
+
+&lt;p&gt;使用gem install jekyll命令安装jekyll。会安装在D:\Ruby22\lib\ruby\gems\2.0.0\gems\目录下，并把相应的依赖文件一同安装下来。&lt;/p&gt;
+
+&lt;p&gt;安装错误，提示：&lt;/p&gt;
+
+&lt;p&gt;ERROR:  While executing gem … (Gem::RemoteFetcher::FetchError)
+Errno::ECONNABORTED: An established connection was aborted by the software in your host machine. - SSL_connect (https://api.rubygems.org/specs.4.8.gz)
+解决：
+FetchError 明显是连接错误，使用国内的镜像源即可。
+gem source -a https://ruby.taobao.org换个源，再安装。&lt;/p&gt;
+
+&lt;p&gt;或者直接改源配置文件：
+在用户主目录下，Linux 是 ~，Windows 是 C:\Users\USERNAME （也可能是 Administrator 或 ProgramData） 下面有一个 .gemrc文件（若没有手动新建），写入下面内容试试：&lt;/p&gt;
+
+&lt;p&gt;:sources:
+- https://ruby.taobao.org
+:update_sources: true
+然后重新gem install jekyll：&lt;/p&gt;
+
+&lt;p&gt;Fetching: ffi-1.9.10-x64-mingw32.gem (100%)
+Successfully installed ffi-1.9.10-x64-mingw32
+Fetching: rb-inotify-0.9.5.gem (100%)
+Successfully installed rb-inotify-0.9.5
+Fetching: rb-fsevent-0.9.7.gem (100%)
+Successfully installed rb-fsevent-0.9.7
+Fetching: listen-3.0.5.gem (100%)
+Successfully installed listen-3.0.5
+Fetching: jekyll-watch-1.3.0.gem (100%)
+Successfully installed jekyll-watch-1.3.0
+Fetching: sass-3.4.20.gem (100%)
+Successfully installed sass-3.4.20
+Fetching: jekyll-sass-converter-1.4.0.gem (100%)
+Successfully installed jekyll-sass-converter-1.4.0
+Fetching: rouge-1.10.1.gem (100%)
+Successfully installed rouge-1.10.1
+Fetching: colorator-0.1.gem (100%)
+Successfully installed colorator-0.1
+Fetching: safe_yaml-1.0.4.gem (100%)
+Successfully installed safe_yaml-1.0.4
+Fetching: mercenary-0.3.5.gem (100%)
+Successfully installed mercenary-0.3.5
+Fetching: kramdown-1.9.0.gem (100%)
+Successfully installed kramdown-1.9.0
+Fetching: liquid-3.0.6.gem (100%)
+Successfully installed liquid-3.0.6
+Fetching: jekyll-3.0.1.gem (100%)
+Successfully installed jekyll-3.0.1
+Parsing documentation for ffi-1.9.10-x64-mingw32
+Installing ri documentation for ffi-1.9.10-x64-mingw32
+Parsing documentation for rb-inotify-0.9.5
+Installing ri documentation for rb-inotify-0.9.5
+Parsing documentation for rb-fsevent-0.9.7
+Installing ri documentation for rb-fsevent-0.9.7
+Parsing documentation for listen-3.0.5
+Installing ri documentation for listen-3.0.5
+Parsing documentation for jekyll-watch-1.3.0
+Installing ri documentation for jekyll-watch-1.3.0
+Parsing documentation for sass-3.4.20
+Installing ri documentation for sass-3.4.20
+Parsing documentation for jekyll-sass-converter-1.4.0
+Installing ri documentation for jekyll-sass-converter-1.4.0
+Parsing documentation for rouge-1.10.1
+Installing ri documentation for rouge-1.10.1
+Parsing documentation for colorator-0.1
+Installing ri documentation for colorator-0.1
+Parsing documentation for safe_yaml-1.0.4
+Installing ri documentation for safe_yaml-1.0.4
+Parsing documentation for mercenary-0.3.5
+Installing ri documentation for mercenary-0.3.5
+Parsing documentation for kramdown-1.9.0
+Installing ri documentation for kramdown-1.9.0
+Parsing documentation for liquid-3.0.6
+Installing ri documentation for liquid-3.0.6
+Parsing documentation for jekyll-3.0.1
+Installing ri documentation for jekyll-3.0.1
+Done installing documentation for ffi, rb-inotify, rb-fsevent, listen, jekyll-watch, sass, jekyll-sass-converter, rouge, colorator, safe_yaml, mercenary, kramdown, liquid, jekyll after 23 seconds
+14 gems installed
+如果需要安装指定版本，可以使用&lt;/p&gt;
+
+&lt;p&gt;gem install jekyll -v 3.0.1
+检测是否安装成功：&lt;/p&gt;
+
+&lt;p&gt;$ jekyll -v
+jekyll 3.0.1
+ok!&lt;/p&gt;
+
+&lt;p&gt;如需卸载使用：&lt;/p&gt;
+
+&lt;p&gt;gem uninstall jekyll
+新建博客&lt;/p&gt;
+
+&lt;p&gt;执行jekyll new xxx会在当前的目录下创建一个xxx的目录，里面就是网站的所有文件了：&lt;/p&gt;
+
+&lt;p&gt;jekyll new myblog
+之后我们在生成的博客文件夹内执行jekyll serve –watch（不加–watch则不会检测文件夹内的变化，即修改后需要重新启动jekyll），即可以通过http://localhost:4000看到默认的页面。&lt;/p&gt;
+
+&lt;p&gt;cd myblog
+jekyll serve –watch
+发布文章&lt;/p&gt;
+
+&lt;p&gt;jekyll的所有文章都放在_posts目录下，分类的话暂时没涉及到，有兴趣的朋友可以先去看看。只需要在此目录内新建一个文件，后缀名为markdown即可。
+我们新建一个文件，名为：first-post.markdown，内容如下：&lt;/p&gt;
+
+&lt;hr /&gt;
+&lt;p&gt;layout: post&lt;br /&gt;
+title: “First post”&lt;br /&gt;
+date: 2016-1-2 21:55:48
+categories: mypost&lt;br /&gt;
+—&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;blockquote&gt;
+    &lt;p&gt;Here is my first jekyll post&lt;/p&gt;
+  &lt;/blockquote&gt;
+&lt;/blockquote&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Just for test&lt;/li&gt;
+  &lt;li&gt;Just for Test&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;I’m trying to write some code 
+注意，此文件上的日期跟实际页面显示的日期没关系，页面的日期由内容中的date来决定。至于其他值，肯定也有相应的用处，大家有兴趣就慢慢研究。&lt;/p&gt;
+
+&lt;p&gt;就这样，我们的第一篇文章也创建完成了。&lt;/p&gt;
+
+&lt;p&gt;jekyll目录结构分析&lt;/p&gt;
+
+&lt;p&gt;生成的目录结构如下：
+1、文件夹_layouts：用于存放模板的文件夹，里面有两个模板，default.html和post.html
+2、文件夹_posts：用于存放博客文章的文件夹
+3、文件夹css：存放博客所用css的文件夹
+4、_site：jekyll自动生成的目录，为静态的页面
+5、_coinfig.yml：jekyll的配置文件，里面可以定义相当多的配置参数，具体配置参数可以参照其官网&lt;/p&gt;
+
+&lt;p&gt;根据实际需要，可能还需要创建如下文件或文件夹：
+1、 _includes:用于存放一些固定的HTML代码段，文件为.html格式，可以在模板中通过liquid标签引入，常用来在各个模板中复用如 导航条、标签栏、侧边栏 之类的在每个页面上都一样不变的内容，需要注意的是，这个代码段也可以是未被编译的，也就是说也可以使用liquid标签放在这些代码段中
+2、 image和js等自定义文件夹：用来存放一些需要的资源文件，如图片或者javascript文件，可以任意命名
+3、 CNAME文件：用来在github上做域名绑定的，将在后面介绍
+4、 favicon.ico：网站的小图标&lt;/p&gt;
+
+&lt;p&gt;更换主题&lt;/p&gt;
+
+&lt;p&gt;更换主题比较简单，直接将主题文件作为一个应用即可。没有专门的主题目录。也就是说下载了主题，相当于已经jekyll new my-awesome-site了。jekyll主题站：http://jekyllthemes.org/。这里列出部分主题：&lt;/p&gt;
+
+&lt;p&gt;1、Huxpro/huxpro.github.io
+https://github.com/Huxpro/huxpro.github.io
+2、Phlow/feeling-responsive
+https://github.com/Phlow/feeling-responsive&lt;/p&gt;
+
+&lt;p&gt;可能出现的问题
+1、提示分页错误&lt;/p&gt;
+
+&lt;p&gt;Deprecation: You appear to have pagination turned on, but you haven’t included the &lt;code class=&quot;highlighter-rouge&quot;&gt;jekyll-paginate&lt;/code&gt; gemguration file.
+解决：只需要在_config.yml里面加一句: gems: [jekyll-paginate]就ok了。&lt;/p&gt;
+
+&lt;p&gt;permalink: pretty
+gems: [jekyll-paginate]
+paginate: 10
+提交至github pages&lt;/p&gt;
+
+&lt;p&gt;新建xx.github.io仓库，将_site下文件提交至仓库。原理是在本地，jekyll将markdown转化成html静态文件。&lt;/p&gt;
+
+&lt;p&gt;注意：仓库名必须是  你的github用户.github.id    提交时只需要将_site目录下的文件提交上去就行&lt;/p&gt;
+
+&lt;p&gt;命令概览&lt;/p&gt;
+
+&lt;p&gt;gem install jekyll #使用ruby的gem安装器安装jekyll
+gem uninstall jekyll #卸载jekyll
+jekyll new my-awesome-site #新建应用
+jekyll serve #启动应用(需进入应用目录)
+jekyll serve –watch #启动应用
+调试&lt;/p&gt;
+
+&lt;p&gt;在博客文件夹下，在命令行中输入jekyll build –trace就可以将所有文章文件根据其模板进行编译，生成结果，放在根目录下的_site中，
+参考&lt;/p&gt;
+
+&lt;p&gt;1、Jekyll • 简单的博客、静态网站工具
+http://jekyll.bootcss.com/
+2、jekyll博客搭建 - 编程人生 - ITeye技术网站
+http://cxshun.iteye.com/blog/1924153
+3、jekyll安装与应用 - BeginMan - 博客园
+http://www.cnblogs.com/BeginMan/p/3549241.html
+4、使用Jekyll在Github上搭建个人博客（博客编写） - 说学逗唱 - SegmentFault
+http://segmentfault.com/a/1190000000406013
+5、使用 GitHub, Jekyll 打造自己的免费独立博客
+http://www.360doc.com/content/14/0415/07/13232598_369075184.shtml&lt;/p&gt;
+
+</description>
+        <pubDate>Thu, 02 Jun 2016 10:50:35 +0800</pubDate>
+        <link>http://yourdomain.com/jekyll/update/2016/06/02/welcome-to-jekyll.html</link>
+        <guid isPermaLink="true">http://yourdomain.com/jekyll/update/2016/06/02/welcome-to-jekyll.html</guid>
+        
+        
+        <category>jekyll</category>
+        
+        <category>update</category>
+        
+      </item>
+    
+  </channel>
+</rss>
