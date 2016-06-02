@@ -6,20 +6,45 @@
 </description>
     <link>http://yourdomain.com/</link>
     <atom:link href="http://yourdomain.com/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 02 Jun 2016 15:14:30 +0800</pubDate>
-    <lastBuildDate>Thu, 02 Jun 2016 15:14:30 +0800</lastBuildDate>
+    <pubDate>Thu, 02 Jun 2016 15:36:18 +0800</pubDate>
+    <lastBuildDate>Thu, 02 Jun 2016 15:36:18 +0800</lastBuildDate>
     <generator>Jekyll v3.1.6</generator>
     
       <item>
-        <title></title>
-        <description>&lt;h2 id=&quot;httpblogcsdnnetzcl1199articledetails51385855&quot;&gt;&lt;a href=&quot;http://blog.csdn.net/zcl1199/article/details/51385855&quot;&gt;源路径&lt;/a&gt;&lt;/h2&gt;
+        <title>如何在监听器中使用spring容器</title>
+        <description>&lt;p&gt;第一步： 在web.xml定义 request的上下文
+代码如下：
+&lt;!-- request上下文监听 --&gt;&lt;/p&gt;
+&lt;listener&gt;
+&lt;listener-class&gt;org.springframework.web.context.request.RequestContextListener&lt;/listener-class&gt;
+&lt;/listener&gt;
+&lt;p&gt;第二步 通过request上下文得到servletContext，从而得到applicationContext（注：可以将该代代码封装到工具类中）
+代码如下：
+—
+HttpServletRequestrequest =((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+         applicationContext= WebApplicationContextUtils.getRequiredWebApplicationContext(request.getServletContext());
+封装工具类的代码如下：
+publicclassApplicationContextUtils {
+   privatestatic ApplicationContext applicationContext;
+   publicstatic ApplicationContextgetApplicationContext(){
+      if(applicationContext ==null){
+         HttpServletRequestrequest = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+         applicationContext = WebApplicationContextUtils.getRequiredWebApplicationContext(request.getServletContext());
+       }
+      returnapplicationContext;
+   }
+}&lt;/p&gt;
 </description>
-        <pubDate>Thu, 02 Jun 2016 15:14:30 +0800</pubDate>
-        <link>http://yourdomain.com/stack%20problems/2016/06/02/2016-06-02-welcome-to-jekyll.html</link>
-        <guid isPermaLink="true">http://yourdomain.com/stack%20problems/2016/06/02/2016-06-02-welcome-to-jekyll.html</guid>
+        <pubDate>Thu, 02 Jun 2016 15:25:50 +0800</pubDate>
+        <link>http://yourdomain.com/stack%20problems/jekyll/update/2016/06/02/welcome-to-jekyll.html</link>
+        <guid isPermaLink="true">http://yourdomain.com/stack%20problems/jekyll/update/2016/06/02/welcome-to-jekyll.html</guid>
         
         
         <category>Stack Problems</category>
+        
+        <category>jekyll</category>
+        
+        <category>update</category>
         
       </item>
     
