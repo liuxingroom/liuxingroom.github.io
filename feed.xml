@@ -6,80 +6,20 @@
 </description>
     <link>http://yourdomain.com/</link>
     <atom:link href="http://yourdomain.com/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 02 Jun 2016 15:06:00 +0800</pubDate>
-    <lastBuildDate>Thu, 02 Jun 2016 15:06:00 +0800</lastBuildDate>
+    <pubDate>Thu, 02 Jun 2016 15:12:27 +0800</pubDate>
+    <lastBuildDate>Thu, 02 Jun 2016 15:12:27 +0800</lastBuildDate>
     <generator>Jekyll v3.1.6</generator>
     
       <item>
-        <title>出颗粒度权限控制和细颗粒度权限控制</title>
-        <description>&lt;p&gt;粗颗粒度权限控制：采用过滤器和session来完成
-粗颗粒度权限控制作用：使用过滤器完成粗颗粒度的权限控制，如果Session不存在就跳转到首页，如果存在可以通过URL链接访问到对应的操作。
-实现：
-—
-先定义一个过滤器
-—&lt;/p&gt;
-
-&lt;p&gt;public class SystemFilter implements Filter {
-    List&lt;String&gt; list = newArrayList&lt;String&gt;();
-    public void init(FilterConfig config) throws ServletException {
-        list.add(&quot;/index.jsp&quot;);
-        list.add(&quot;/image.jsp&quot;);
-        list.add(&quot;/system/elecMenuAction_menuHome.do&quot;);
-    }&lt;/String&gt;&lt;/String&gt;&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;public void doFilter(ServletRequest req, ServletResponse res,
-        FilterChain chain) throws IOException,ServletException {
-    HttpServletRequest request =(HttpServletRequest) req;
-    HttpServletResponse response= (HttpServletResponse) res;
-    String path =request.getServletPath();
-    if(list.contains(path)){
-        chain.doFilter(request,response);
-        return;
-    }
-    ElecUserelecUser = (ElecUser)request.getSession().getAttribute(&quot;globle_user&quot;);
-    if(elecUser!=null){
-        chain.doFilter(request,response);
-        return;
-    }
-    response.sendRedirect(request.getContextPath()+&quot;/index.jsp&quot;);
-}
-
-public void destroy() {
- 
-} }
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;第二步：在文本容器中添加对应的过滤器
-&lt;!-- 自定义过滤器，要求添加到struts2过滤器的前面 --&gt;
-    &lt;filter&gt;
-        &lt;filter-name&gt;SystemFilter&lt;/filter-name&gt;
-        &lt;filter-class&gt;cn.itcast.elec.util.SystemFilter&lt;/filter-class&gt;
-    &lt;/filter&gt;
-    &lt;filter-mapping&gt;
-        &lt;filter-name&gt;SystemFilter&lt;/filter-name&gt;
-        &lt;url-pattern&gt;*.do&lt;/url-pattern&gt;
-        &lt;url-pattern&gt;*.jsp&lt;/url-pattern&gt;
-    &lt;/filter-mapping&gt;
-总结：粗颗粒的的权限控制
-1.使用过滤器
-2.在在过滤器中定义放行的连接，因为不是每个操作都会存在session（如：进入登录的界面、生成验证码的界面）
-3.在过滤器中获取登陆后存放的Session，如果Session不为空，则放行，即可以操作定义的业务功能，如果Session为空，则挑转到登陆页面。
-4.控制访问的系统必须要存在session
-—
-&lt;a href=&quot;http://blog.csdn.net/zcl1199/article/details/51385855&quot;&gt;源路径&lt;/a&gt;
-—&lt;/p&gt;
+        <title></title>
+        <description>&lt;h2 id=&quot;httpblogcsdnnetzcl1199articledetails51385855&quot;&gt;&lt;a href=&quot;http://blog.csdn.net/zcl1199/article/details/51385855&quot;&gt;源路径&lt;/a&gt;&lt;/h2&gt;
 </description>
-        <pubDate>Thu, 02 Jun 2016 14:29:14 +0800</pubDate>
-        <link>http://yourdomain.com/stack%20problems/jekyll/update/2016/06/02/welcome-to-jekyll.html</link>
-        <guid isPermaLink="true">http://yourdomain.com/stack%20problems/jekyll/update/2016/06/02/welcome-to-jekyll.html</guid>
+        <pubDate>Thu, 02 Jun 2016 15:12:27 +0800</pubDate>
+        <link>http://yourdomain.com/stack%20problems/2016/06/02/2016-06-02-welcome-to-jekyll.html</link>
+        <guid isPermaLink="true">http://yourdomain.com/stack%20problems/2016/06/02/2016-06-02-welcome-to-jekyll.html</guid>
         
         
         <category>Stack Problems</category>
-        
-        <category>jekyll</category>
-        
-        <category>update</category>
         
       </item>
     
